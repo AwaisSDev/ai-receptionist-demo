@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Voice Assistant – Talk to our AI Agent</title>
+  <meta name="description"
+    content="Engage with our advanced AI voice agent in real-time. Ask questions about availability, pricing, and services instantly.">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500;700&display=swap');
+
+    :root {
+      --color-background-primary: #121212;
+      --color-background-secondary: rgba(255, 255, 255, 0.04);
+      --color-border-secondary: rgba(255, 255, 255, 0.12);
+      --color-text-primary: #ffffff;
+      --color-text-secondary: #9a9a9f;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #121212;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--color-text-primary);
+    }
+
+    .wrap {
+      flex: 1;
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1.5rem;
+      position: relative;
+      overflow: hidden;
+      background: radial-gradient(circle at 60% 20%, #2f2f32 0%, #111112 70%);
+    }
+
+    .bg-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      pointer-events: none;
+    }
+
+    .orb1 {
+      width: 500px;
+      height: 500px;
+      background: #CECBF6;
+      top: -150px;
+      right: -100px;
+      opacity: 0.15;
+    }
+
+    .orb2 {
+      width: 350px;
+      height: 350px;
+      background: #9FE1CB;
+      bottom: -100px;
+      left: -80px;
+      opacity: 0.1;
+    }
+
+    .badge {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--color-text-secondary);
+      padding: 8px 18px;
+      border-radius: 999px;
+      margin-bottom: 1.75rem;
+      backdrop-filter: blur(4px);
+    }
+
+    .headline {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2rem, 6vw, 3rem);
+      font-weight: 800;
+      color: var(--color-text-primary);
+      text-align: center;
+      line-height: 1.15;
+      max-width: 560px;
+      margin-bottom: 1.5rem;
+    }
+
+    .sub {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 300;
+      color: var(--color-text-secondary);
+      text-align: center;
+      max-width: 420px;
+      line-height: 1.6;
+      margin-bottom: 3rem;
+    }
+
+    .talk-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 999px;
+      padding: 14px 28px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s ease;
+      outline: none;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .talk-btn:hover {
+      transform: translateY(-1px);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .talk-btn:active {
+      transform: translateY(1px);
+    }
+
+    .talk-btn.active {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: #EF4444;
+      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
+    }
+
+    .talk-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .mic-icon {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: #fff;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .pulse-ring {
+      position: absolute;
+      inset: -6px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      opacity: 0;
+    }
+
+    .talk-btn.active .pulse-ring {
+      animation: pulse 1.4s ease-out infinite;
+      border-color: rgba(239, 68, 68, 0.4);
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        opacity: 0.5;
+      }
+
+      100% {
+        transform: scale(1.35);
+        opacity: 0;
+      }
+    }
+
+    .status {
+      margin-top: 1.5rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      min-height: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .wave-bars {
+      display: none;
+      align-items: center;
+      gap: 3px;
+      height: 18px;
+    }
+
+    .wave-bars.visible {
+      display: inline-flex;
+    }
+
+    .bar {
+      width: 3px;
+      background: #ffffff;
+      border-radius: 2px;
+      animation: wave 0.8s ease-in-out infinite;
+    }
+
+    .bar:nth-child(1) {
+      animation-delay: 0s;
+      height: 6px;
+    }
+
+    .bar:nth-child(2) {
+      animation-delay: 0.15s;
+      height: 12px;
+    }
+
+    .bar:nth-child(3) {
+      animation-delay: 0.3s;
+      height: 8px;
+    }
+
+    .bar:nth-child(4) {
+      animation-delay: 0.1s;
+      height: 14px;
+    }
+
+    .bar:nth-child(5) {
+      animation-delay: 0.25s;
+      height: 6px;
+    }
+
+    @keyframes wave {
+
+      0%,
+      100% {
+        transform: scaleY(1);
+      }
+
+      50% {
+        transform: scaleY(1.8);
+      }
+    }
+
+    .error-msg {
+      color: #EF4444;
+      font-size: 13px;
+      margin-top: 0.75rem;
+      text-align: center;
+      max-width: 360px;
+      display: none;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap" role="main">
+    <div class="bg-orb orb1"></div>
+    <div class="bg-orb orb2"></div>
+    <h2 class="sr-only">AI voice agent demo page</h2>
+    <span class="badge">AI-powered voice agent</span>
+    <h1 class="headline">Talk to our<br>AI assistant</h1>
+    <p class="sub">Ask anything — availability, services, pricing. Our AI is ready to help, right now.</p>
+
+    <button class="talk-btn" id="talkBtn" onclick="toggleCall()" aria-label="Talk to our agent">
+      <div class="pulse-ring"></div>
+      <svg class="mic-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="9" y="2" width="6" height="12" rx="3" />
+        <path d="M5 10a7 7 0 0 0 14 0" />
+        <line x1="12" y1="19" x2="12" y2="22" />
+        <line x1="8" y1="22" x2="16" y2="22" />
+      </svg>
+      <span id="btnLabel">Talk to our agent</span>
+    </button>
+
+    <div class="status" id="statusArea">
+      <span id="statusText">Tap to start</span>
+      <div class="wave-bars" id="waveBars">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </div>
+    </div>
+    <p class="error-msg" id="errorMsg"></p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/gh/balacodeio/Vapi-Web-UMD@latest/dist/latest/vapi-web-bundle.min.js"></script>
+  <script>
+    let VAPI_PUBLIC_KEY = 'PASTE_YOUR_VAPI_PUBLIC_KEY_HERE';
+    let ASSISTANT_ID = 'PASTE_YOUR_VAPI_ASSISTANT_ID_HERE';
+
+    let vapi = null;
+    let callActive = false;
+
+    // Fetch keys dynamically from the serverless API if deployed on Vercel
+    async function loadConfig() {
+      try {
+        const response = await fetch('/api/config');
+        if (response.ok) {
+          const config = await response.json();
+          if (config.publicKey && config.assistantId) {
+            VAPI_PUBLIC_KEY = config.publicKey;
+            ASSISTANT_ID = config.assistantId;
+            console.log('Successfully loaded production Vapi credentials from Vercel.');
+          }
+        }
+      } catch (e) {
+        console.log('Running locally or serverless function not active, using default fallback credentials.');
+      }
+    }
+
+    loadConfig();
+
+    function setStatus(text, wave = false) {
+      const statusText = document.getElementById('statusText');
+      const waveBars = document.getElementById('waveBars');
+      statusText.textContent = text;
+      statusText.style.display = wave ? 'none' : 'inline';
+      wave ? waveBars.classList.add('visible') : waveBars.classList.remove('visible');
+    }
+
+    function setBtn(active, label, disabled = false) {
+      const btn = document.getElementById('talkBtn');
+      const btnLabel = document.getElementById('btnLabel');
+      active ? btn.classList.add('active') : btn.classList.remove('active');
+      btnLabel.textContent = label;
+      btn.disabled = disabled;
+    }
+
+    function showError(msg) {
+      const el = document.getElementById('errorMsg');
+      el.textContent = msg;
+      el.style.display = 'block';
+      setTimeout(() => { el.style.display = 'none'; }, 5000);
+    }
+
+    async function toggleCall() {
+      if (callActive) {
+        if (vapi) vapi.stop();
+        return;
+      }
+
+      if (VAPI_PUBLIC_KEY.includes('PASTE_YOUR') || ASSISTANT_ID.includes('PASTE_YOUR') || !VAPI_PUBLIC_KEY || !ASSISTANT_ID) {
+        showError('Please paste your Vapi Public Key and Assistant ID in the script section!');
+        return;
+      }
+
+      if (!vapi) {
+        try {
+          vapi = new Vapi(VAPI_PUBLIC_KEY);
+
+          vapi.on('call-start', () => {
+            callActive = true;
+            setBtn(true, 'End call');
+            setStatus('', true);
+          });
+
+          vapi.on('call-end', () => {
+            callActive = false;
+            setBtn(false, 'Talk to our agent');
+            setStatus('Call ended');
+            setTimeout(() => setStatus('Tap to start'), 2500);
+          });
+
+          vapi.on('error', (e) => {
+            callActive = false;
+            setBtn(false, 'Talk to our agent');
+            setStatus('Tap to start');
+            showError('Could not connect. Please try again.');
+            console.error('Vapi error:', e);
+          });
+
+        } catch (e) {
+          showError('Failed to initialize. Check your connection.');
+          return;
+        }
+      }
+
+      setBtn(false, 'Connecting...', true);
+      setStatus('Connecting...');
+
+      try {
+        await vapi.start(ASSISTANT_ID);
+      } catch (e) {
+        setBtn(false, 'Talk to our agent', false);
+        setStatus('Tap to start');
+        showError('Could not start call. Please try again.');
+        console.error(e);
+      }
+    }
+  </script>
+</body>
+
+</html>
