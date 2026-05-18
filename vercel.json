@@ -3,10 +3,6 @@
   "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/",
-      "destination": "/vapi_agent_live.html"
-    },
-    {
       "source": "/api/config",
       "destination": "/api/config.js"
     }
