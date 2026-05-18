@@ -303,13 +303,13 @@
       outline: none;
       color: #fff;
       font-family: 'DM Sans', sans-serif;
-      font-size: 16px;
-      letter-spacing: 0.25em;
+      font-size: 15px;
+      letter-spacing: normal;
       width: 100%;
     }
 
     #passcodeInput::placeholder {
-      letter-spacing: 0.1em;
+      letter-spacing: normal;
       color: rgba(255, 255, 255, 0.3);
     }
 
@@ -364,13 +364,13 @@
     <h1 class="headline">Talk to our<br>AI assistant</h1>
     <p class="sub">Ask anything — availability, services, pricing. Our AI is ready to help, right now.</p>
 
-    <!-- Passcode Section -->
+    <!-- Password Section -->
     <div class="passcode-box" id="passcodeBox">
-      <p class="passcode-hint">Enter passcode to unlock demo</p>
+      <p class="passcode-hint">Enter password to unlock demo</p>
       <div class="passcode-input-wrapper">
-        <input type="password" id="passcodeInput" placeholder="••••" maxlength="12" aria-label="Demo passcode"
+        <input type="password" id="passcodeInput" placeholder="••••••••" maxlength="64" aria-label="Demo password"
           onkeydown="if(event.key === 'Enter') verifyPasscode()">
-        <button class="unlock-btn" onclick="verifyPasscode()" aria-label="Verify passcode">
+        <button class="unlock-btn" onclick="verifyPasscode()" aria-label="Verify password">
           <svg viewBox="0 0 24 24" class="unlock-icon">
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
             <path d="M7 11V7a5 5 0 0 1 10 0v4" />
