@@ -262,84 +262,7 @@
       display: none;
     }
 
-    .passcode-box {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-      max-width: 280px;
-      margin-top: 1rem;
-      transition: all 0.4s ease;
-    }
 
-    .passcode-hint {
-      font-size: 11px;
-      color: var(--color-text-secondary);
-      margin-bottom: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-
-    .passcode-input-wrapper {
-      display: flex;
-      align-items: center;
-      width: 100%;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 999px;
-      padding: 4px 6px 4px 20px;
-      transition: all 0.3s ease;
-    }
-
-    .passcode-input-wrapper:focus-within {
-      border-color: rgba(255, 255, 255, 0.4);
-      box-shadow: 0 0 12px rgba(255, 255, 255, 0.08);
-    }
-
-    #passcodeInput {
-      flex: 1;
-      background: transparent;
-      border: none;
-      outline: none;
-      color: #fff;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      letter-spacing: normal;
-      width: 100%;
-    }
-
-    #passcodeInput::placeholder {
-      letter-spacing: normal;
-      color: rgba(255, 255, 255, 0.3);
-    }
-
-    .unlock-btn {
-      background: rgba(255, 255, 255, 0.08);
-      border: none;
-      border-radius: 50%;
-      width: 38px;
-      height: 38px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .unlock-btn:hover {
-      background: rgba(255, 255, 255, 0.18);
-      transform: scale(1.05);
-    }
-
-    .unlock-icon {
-      width: 16px;
-      height: 16px;
-      fill: none;
-      stroke: #fff;
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
 
     .sr-only {
       position: absolute;
@@ -364,20 +287,7 @@
     <h1 class="headline">Talk to our<br>AI assistant</h1>
     <p class="sub">Ask anything — availability, services, pricing. Our AI is ready to help, right now.</p>
 
-    <!-- Password Section -->
-    <div class="passcode-box" id="passcodeBox">
-      <p class="passcode-hint">Enter password to unlock demo</p>
-      <div class="passcode-input-wrapper">
-        <input type="password" id="passcodeInput" placeholder="••••••••" maxlength="64" aria-label="Demo password"
-          onkeydown="if(event.key === 'Enter') verifyPasscode()">
-        <button class="unlock-btn" onclick="verifyPasscode()" aria-label="Verify password">
-          <svg viewBox="0 0 24 24" class="unlock-icon">
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-          </svg>
-        </button>
-      </div>
-    </div>
+
 
     <!-- Talk Button -->
     <button class="talk-btn" id="talkBtn" onclick="toggleCall()" aria-label="Talk to our agent"
@@ -413,58 +323,27 @@
     let vapi = null;
     let callActive = false;
 
-    // Check if passcode is already verified and saved in sessionStorage
-    async function checkSavedSession() {
-      const savedPass = sessionStorage.getItem('demo_passcode');
-      if (savedPass) {
-        await fetchCredentials(savedPass, true);
-      }
-    }
-
-    async function verifyPasscode() {
-      const input = document.getElementById('passcodeInput');
-      const passcode = input.value.trim();
-      if (!passcode) {
-        showError('Please enter a passcode');
-        return;
-      }
-      await fetchCredentials(passcode, false);
-    }
-
-    async function fetchCredentials(passcode, isAutoLoad = false) {
+    async function fetchCredentials() {
       try {
-        const response = await fetch(`/api/config?passcode=${encodeURIComponent(passcode)}`);
+        const response = await fetch('/api/config');
         const data = await response.json();
 
         if (response.ok && data.success) {
           VAPI_PUBLIC_KEY = data.publicKey;
           ASSISTANT_ID = data.assistantId;
-          sessionStorage.setItem('demo_passcode', passcode);
 
-          // Animate transition from passcode input to the mic talk button
-          const passcodeBox = document.getElementById('passcodeBox');
           const talkBtn = document.getElementById('talkBtn');
-
-          passcodeBox.style.opacity = '0';
-          setTimeout(() => {
-            passcodeBox.style.display = 'none';
-            talkBtn.style.display = 'inline-flex';
-            setTimeout(() => { talkBtn.style.opacity = '1'; }, 50);
-          }, 300);
+          talkBtn.style.display = 'inline-flex';
+          setTimeout(() => { talkBtn.style.opacity = '1'; }, 50);
         } else {
-          if (!isAutoLoad) {
-            showError(data.message || 'Incorrect passcode');
-            sessionStorage.removeItem('demo_passcode');
-          }
+          showError('Could not load credentials');
         }
       } catch (e) {
-        if (!isAutoLoad) {
-          showError('Could not connect. Please try again.');
-        }
+        showError('Could not connect. Please try again.');
       }
     }
 
-    checkSavedSession();
+    fetchCredentials();
 
     function setStatus(text, wave = false) {
       const statusText = document.getElementById('statusText');
